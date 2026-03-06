@@ -1324,19 +1324,28 @@ class _TencentStockChartPageState extends State<TencentStockChartPage>
                           ),
                           Expanded(
                             flex: 28,
-                            child: Text(
-                              row.price.toStringAsFixed(2),
-                              textAlign: TextAlign.right,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 10.5,
-                                fontWeight: FontWeight.w600,
-                                color: referencePrice == null
-                                    ? (row.isUp
-                                        ? const Color(0xFFE53935)
-                                        : const Color(0xFF22A06B))
-                                    : _priceColor(row.price, referencePrice),
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.centerRight,
+                                child: Text(
+                                  row.price.toStringAsFixed(2),
+                                  textAlign: TextAlign.right,
+                                  maxLines: 1,
+                                  softWrap: false,
+                                  overflow: TextOverflow.visible,
+                                  style: TextStyle(
+                                    fontSize: 10.5,
+                                    fontWeight: FontWeight.w600,
+                                    color: referencePrice == null
+                                        ? (row.isUp
+                                            ? const Color(0xFFE53935)
+                                            : const Color(0xFF22A06B))
+                                        : _priceColor(
+                                            row.price, referencePrice),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -1363,99 +1372,32 @@ class _TencentStockChartPageState extends State<TencentStockChartPage>
           );
         }
 
+        final panelHeight = constraints.maxHeight;
+        final pieHeight = (panelHeight * 0.16).clamp(56.0, 78.0);
+        final statsHeight = (panelHeight * 0.34).clamp(104.0, 186.0);
+        final shouldUseScrollable = panelHeight < 290;
+
+        if (shouldUseScrollable) {
+          return ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              _buildTradeSummary(
+                  pieHeight: pieHeight, statsHeight: statsHeight),
+              _buildTradeDetailHeader(),
+              const Divider(height: 1, color: Color(0xFFE6EBF2)),
+              for (final row in trades.take(20))
+                _buildTradeDetailRow(
+                  row,
+                  referencePrice,
+                  emphasizeVolumeColor: true,
+                ),
+            ],
+          );
+        }
+
         return Column(
           children: [
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(6, 6, 6, 4),
-              child: const Text(
-                '成交统计',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: Color(0xFF4B5563),
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 78,
-              child: Row(
-                children: [
-                  const Expanded(
-                    child: Center(
-                      child: Text(
-                        '主\n动\n卖',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Color(0xFF16A34A),
-                          fontSize: 10.5,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 82,
-                    child: CustomPaint(
-                      painter: _TradePiePainter(),
-                      child: const SizedBox.expand(),
-                    ),
-                  ),
-                  const Expanded(
-                    child: Center(
-                      child: Text(
-                        '主\n动\n买',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Color(0xFFE53935),
-                          fontSize: 10.5,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              height: (constraints.maxHeight * 0.34).clamp(128.0, 186.0),
-              margin: const EdgeInsets.fromLTRB(2, 2, 2, 4),
-              decoration: BoxDecoration(
-                border: Border.all(color: const Color(0xFFD1D5DB)),
-              ),
-              child: Stack(
-                children: [
-                  Positioned(
-                    left: 0,
-                    top: 0,
-                    bottom:
-                        ((constraints.maxHeight * 0.34).clamp(128.0, 186.0) /
-                            2),
-                    child: Container(width: 2, color: const Color(0xFFE53935)),
-                  ),
-                  Positioned(
-                    left: 0,
-                    top: ((constraints.maxHeight * 0.34).clamp(128.0, 186.0) /
-                        2),
-                    bottom: 0,
-                    child: Container(width: 2, color: const Color(0xFF16A34A)),
-                  ),
-                  const Column(
-                    children: [
-                      _TradeStatRow('特大', '11.05万', '7%'),
-                      _TradeStatRow('大单', '16.68万', '10%'),
-                      _TradeStatRow('中单', '29.09万', '18%'),
-                      _TradeStatRow('小单', '30.89万', '19%'),
-                      _TradeStatRow('特大', '82024', '5%'),
-                      _TradeStatRow('大单', '10.69万', '7%'),
-                      _TradeStatRow('中单', '25.48万', '16%'),
-                      _TradeStatRow('小单', '28.37万', '18%'),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+            _buildTradeSummary(pieHeight: pieHeight, statsHeight: statsHeight),
             _buildTradeDetailHeader(),
             const Divider(height: 1, color: Color(0xFFE6EBF2)),
             Expanded(
@@ -1474,6 +1416,104 @@ class _TencentStockChartPageState extends State<TencentStockChartPage>
           ],
         );
       },
+    );
+  }
+
+  Widget _buildTradeSummary({
+    required double pieHeight,
+    required double statsHeight,
+  }) {
+    return Column(
+      children: [
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.fromLTRB(6, 6, 6, 4),
+          child: const Text(
+            '成交统计',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 11,
+              color: Color(0xFF4B5563),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        SizedBox(
+          height: pieHeight,
+          child: Row(
+            children: [
+              const Expanded(
+                child: Center(
+                  child: Text(
+                    '主\n动\n卖',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Color(0xFF16A34A),
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 82,
+                child: CustomPaint(
+                  painter: _TradePiePainter(),
+                  child: const SizedBox.expand(),
+                ),
+              ),
+              const Expanded(
+                child: Center(
+                  child: Text(
+                    '主\n动\n买',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Color(0xFFE53935),
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Container(
+          height: statsHeight,
+          margin: const EdgeInsets.fromLTRB(2, 2, 2, 4),
+          decoration: BoxDecoration(
+            border: Border.all(color: const Color(0xFFD1D5DB)),
+          ),
+          child: Stack(
+            children: [
+              Positioned(
+                left: 0,
+                top: 0,
+                bottom: statsHeight / 2,
+                child: Container(width: 2, color: const Color(0xFFE53935)),
+              ),
+              Positioned(
+                left: 0,
+                top: statsHeight / 2,
+                bottom: 0,
+                child: Container(width: 2, color: const Color(0xFF16A34A)),
+              ),
+              const Column(
+                children: [
+                  _TradeStatRow('特大', '11.05万', '7%'),
+                  _TradeStatRow('大单', '16.68万', '10%'),
+                  _TradeStatRow('中单', '29.09万', '18%'),
+                  _TradeStatRow('小单', '30.89万', '19%'),
+                  _TradeStatRow('特大', '82024', '5%'),
+                  _TradeStatRow('大单', '10.69万', '7%'),
+                  _TradeStatRow('中单', '25.48万', '16%'),
+                  _TradeStatRow('小单', '28.37万', '18%'),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -1522,19 +1562,27 @@ class _TencentStockChartPageState extends State<TencentStockChartPage>
                 ),
                 Expanded(
                   flex: 28,
-                  child: Text(
-                    row.price.toStringAsFixed(2),
-                    textAlign: TextAlign.right,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: compact ? 10.5 : 11,
-                      fontWeight: FontWeight.w600,
-                      color: referencePrice == null
-                          ? (row.isUp
-                              ? const Color(0xFFE53935)
-                              : const Color(0xFF22A06B))
-                          : _priceColor(row.price, referencePrice),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        row.price.toStringAsFixed(2),
+                        textAlign: TextAlign.right,
+                        maxLines: 1,
+                        softWrap: false,
+                        overflow: TextOverflow.visible,
+                        style: TextStyle(
+                          fontSize: compact ? 10.5 : 11,
+                          fontWeight: FontWeight.w600,
+                          color: referencePrice == null
+                              ? (row.isUp
+                                  ? const Color(0xFFE53935)
+                                  : const Color(0xFF22A06B))
+                              : _priceColor(row.price, referencePrice),
+                        ),
+                      ),
                     ),
                   ),
                 ),
