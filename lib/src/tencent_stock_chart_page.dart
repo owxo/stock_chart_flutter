@@ -1308,29 +1308,27 @@ class _TencentStockChartPageState extends State<TencentStockChartPage>
                   height: 22,
                   child: LayoutBuilder(
                     builder: (context, constraints) {
-                      final available = constraints.maxWidth;
-                      final timeW = mathMin(34.0, available * 0.34);
-                      final priceW = mathMin(32.0, available * 0.30);
-                      const gap = 3.0;
-                      final volW =
-                          mathMax(16.0, available - timeW - priceW - gap);
                       return Row(
                         children: [
-                          SizedBox(
-                            width: timeW,
+                          Expanded(
+                            flex: 32,
                             child: Text(
                               row.time,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                 fontSize: 10,
                                 color: Color(0xFF6B7785),
                               ),
                             ),
                           ),
-                          SizedBox(
-                            width: priceW,
+                          Expanded(
+                            flex: 28,
                             child: Text(
                               row.price.toStringAsFixed(2),
                               textAlign: TextAlign.right,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 fontSize: 10.5,
                                 fontWeight: FontWeight.w600,
@@ -1342,12 +1340,12 @@ class _TencentStockChartPageState extends State<TencentStockChartPage>
                               ),
                             ),
                           ),
-                          const SizedBox(width: 3),
-                          SizedBox(
-                            width: volW,
+                          Expanded(
+                            flex: 40,
                             child: Text(
                               row.volumeText,
                               textAlign: TextAlign.right,
+                              maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                 fontSize: 10.5,
@@ -1421,7 +1419,7 @@ class _TencentStockChartPageState extends State<TencentStockChartPage>
               ),
             ),
             Container(
-              height: 168,
+              height: (constraints.maxHeight * 0.34).clamp(128.0, 186.0),
               margin: const EdgeInsets.fromLTRB(2, 2, 2, 4),
               decoration: BoxDecoration(
                 border: Border.all(color: const Color(0xFFD1D5DB)),
@@ -1431,12 +1429,15 @@ class _TencentStockChartPageState extends State<TencentStockChartPage>
                   Positioned(
                     left: 0,
                     top: 0,
-                    bottom: 84,
+                    bottom:
+                        ((constraints.maxHeight * 0.34).clamp(128.0, 186.0) /
+                            2),
                     child: Container(width: 2, color: const Color(0xFFE53935)),
                   ),
                   Positioned(
                     left: 0,
-                    top: 84,
+                    top: ((constraints.maxHeight * 0.34).clamp(128.0, 186.0) /
+                        2),
                     bottom: 0,
                     child: Container(width: 2, color: const Color(0xFF16A34A)),
                   ),
@@ -1504,29 +1505,28 @@ class _TencentStockChartPageState extends State<TencentStockChartPage>
         height: 22.5,
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final available = constraints.maxWidth;
-            final compact = available < 112;
-            final timeW = compact ? 28.0 : 38.0;
-            final priceW = compact ? 30.0 : 42.0;
-            final gap = compact ? 2.0 : 4.0;
-            final volW = mathMax(16.0, available - timeW - priceW - gap);
+            final compact = constraints.maxWidth < 112;
             return Row(
               children: [
-                SizedBox(
-                  width: timeW,
+                Expanded(
+                  flex: 32,
                   child: Text(
                     row.time,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: compact ? 9.5 : 10,
                       color: const Color(0xFF6B7785),
                     ),
                   ),
                 ),
-                SizedBox(
-                  width: priceW,
+                Expanded(
+                  flex: 28,
                   child: Text(
                     row.price.toStringAsFixed(2),
                     textAlign: TextAlign.right,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: compact ? 10.5 : 11,
                       fontWeight: FontWeight.w600,
@@ -1538,12 +1538,12 @@ class _TencentStockChartPageState extends State<TencentStockChartPage>
                     ),
                   ),
                 ),
-                SizedBox(width: gap),
-                SizedBox(
-                  width: volW,
+                Expanded(
+                  flex: 40,
                   child: Text(
                     row.volumeText,
                     textAlign: TextAlign.right,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: compact ? 10 : 11,
@@ -1790,40 +1790,50 @@ class _TradeStatRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Row(
-        children: [
-          SizedBox(
-            width: 30,
-            child: Center(
-              child: Text(
-                label,
-                style:
-                    const TextStyle(fontSize: 10.5, color: Color(0xFF111827)),
+      child: Container(
+        decoration: const BoxDecoration(
+          border: Border(
+            top: BorderSide(color: Color(0xFFD1D5DB), width: 0.6),
+          ),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 24,
+              child: Center(
+                child: Text(
+                  label,
+                  style:
+                      const TextStyle(fontSize: 10.5, color: Color(0xFF111827)),
+                ),
               ),
             ),
-          ),
-          const VerticalDivider(width: 1, color: Color(0xFFD1D5DB)),
-          Expanded(
-            child: Center(
-              child: Text(
-                value,
-                style:
-                    const TextStyle(fontSize: 10.5, color: Color(0xFF111827)),
+            Container(width: 0.8, color: const Color(0xFFD1D5DB)),
+            Expanded(
+              flex: 52,
+              child: Center(
+                child: Text(
+                  value,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style:
+                      const TextStyle(fontSize: 10.5, color: Color(0xFF111827)),
+                ),
               ),
             ),
-          ),
-          const VerticalDivider(width: 1, color: Color(0xFFD1D5DB)),
-          SizedBox(
-            width: 30,
-            child: Center(
-              child: Text(
-                ratio,
-                style:
-                    const TextStyle(fontSize: 10.5, color: Color(0xFF111827)),
+            Container(width: 0.8, color: const Color(0xFFD1D5DB)),
+            Expanded(
+              flex: 24,
+              child: Center(
+                child: Text(
+                  ratio,
+                  style:
+                      const TextStyle(fontSize: 10.5, color: Color(0xFF111827)),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
