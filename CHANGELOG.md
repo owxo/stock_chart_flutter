@@ -12,3 +12,5 @@
 - Initial release.
 - Added candlestick chart with pinch zoom, pan, MA overlays and crosshair.
 - Added line chart with pinch zoom, pan and crosshair.
+
+- test
