@@ -214,7 +214,7 @@ class _CandlestickPainter extends CustomPainter {
     required this.scrollX,
     required this.selectedIndex,
     required this.maPeriods,
-  });
+  }) : _closePrefixSums = _buildClosePrefixSums(data);
 
   final List<CandleData> data;
   final StockChartTheme chartTheme;
@@ -224,8 +224,17 @@ class _CandlestickPainter extends CustomPainter {
   final double scrollX;
   final int? selectedIndex;
   final List<int> maPeriods;
+  final List<double> _closePrefixSums;
 
   double get _step => candleWidth + candleGap;
+
+  static List<double> _buildClosePrefixSums(List<CandleData> data) {
+    final sums = List<double>.filled(data.length + 1, 0);
+    for (var i = 0; i < data.length; i++) {
+      sums[i + 1] = sums[i] + data[i].close;
+    }
+    return sums;
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -342,6 +351,8 @@ class _CandlestickPainter extends CustomPainter {
     int startIndex,
     int endIndex,
   ) {
+    if (chartTheme.maColors.isEmpty) return;
+
     for (var maIdx = 0; maIdx < maPeriods.length; maIdx++) {
       final period = maPeriods[maIdx];
       if (period <= 1) continue;
@@ -350,10 +361,7 @@ class _CandlestickPainter extends CustomPainter {
       var hasStarted = false;
 
       for (var i = math.max(period - 1, startIndex); i <= endIndex; i++) {
-        double sum = 0;
-        for (var j = i - period + 1; j <= i; j++) {
-          sum += data[j].close;
-        }
+        final sum = _closePrefixSums[i + 1] - _closePrefixSums[i + 1 - period];
         final ma = sum / period;
 
         final x = chartRect.left + i * _step - scrollX + candleWidth / 2;

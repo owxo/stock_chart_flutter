@@ -44,6 +44,14 @@ class _StockLineChartState extends State<StockLineChart> {
     _pointWidth = widget.initialPointWidth;
   }
 
+  @override
+  void didUpdateWidget(covariant StockLineChart oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.data.length != oldWidget.data.length) {
+      _selectedIndex = null;
+    }
+  }
+
   double _contentWidth() => math.max(1, widget.data.length - 1) * _pointWidth;
 
   double _maxScroll(double viewportWidth) {

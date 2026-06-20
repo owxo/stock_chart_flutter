@@ -1,15 +1,23 @@
 name: stock_chart_flutter
 description: A Flutter stock chart package with candlestick and line charts, pinch zoom, pan, and crosshair.
-version: 0.1.0
-homepage: https://github.com/yourname/stock_chart_flutter
-repository: https://github.com/yourname/stock_chart_flutter
-issue_tracker: https://github.com/yourname/stock_chart_flutter/issues
+version: 0.1.2
+homepage: https://github.com/owxo/stock_chart_flutter
+repository: https://github.com/owxo/stock_chart_flutter
+issue_tracker: https://github.com/owxo/stock_chart_flutter/issues
 topics:
   - stock
   - chart
   - candlestick
   - trading
   - finance
+
+platforms:
+  android:
+  ios:
+  linux:
+  macos:
+  web:
+  windows:
 
 environment:
   sdk: ">=3.0.0 <4.0.0"

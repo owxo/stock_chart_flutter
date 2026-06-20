@@ -12,13 +12,24 @@ A Flutter stock chart package for financial apps.
 - Crosshair with selection callback (long press, click, hover)
 - Simple moving averages (MA)
 
+## Supported Platforms
+
+This package is implemented with Flutter widgets and painters, so it supports:
+
+- Android
+- iOS
+- Web
+- macOS
+- Windows
+- Linux
+
 ## Installation
 
 Add this to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  stock_chart_flutter: ^0.1.0
+  stock_chart_flutter: ^0.1.2
 ```
 
 ## Usage
@@ -49,11 +60,22 @@ StockCandlestickChart(
 Tencent quote-style screen:
 
 ```dart
+// Starts empty. Pass a symbol only when you want to fetch remote quotes.
+const TencentStockChartPage()
+```
+
+```dart
 TencentStockChartPage(
   symbol: 'sz001896',
   autoRefreshSeconds: 3,
 )
 ```
+
+The example app starts empty and includes a symbol input. Enter a Tencent-style
+code such as `sz001896` or `sh600519`; six-digit A-share codes are normalized
+automatically (`600519` becomes `sh600519`, other six-digit codes become `sz...`).
+You can also pass the initial symbol in the URL, for example
+`http://localhost:62436/?symbol=sz001896`.
 
 Line chart:
 
@@ -83,6 +105,9 @@ Before publishing:
 flutter pub get
 flutter analyze
 flutter test
+cd example
+flutter test
+cd ..
 flutter pub publish --dry-run
 ```
 

@@ -1,0 +1,13 @@
+# Internal project coordination docs.
+APP.md
+docs/
+
+# Local IDE metadata.
+.idea/
+.vscode/
+
+# Generated files and local outputs.
+.dart_tool/
+build/
+coverage/
+output/
