@@ -93,6 +93,16 @@ StockLineChart(
 )
 ```
 
+## Commercial Support / 商业支持
+
+This package remains open-source under the MIT License. Paid support is available for narrowly scoped chart integration, rendering, interaction, and multi-platform compatibility problems.
+
+本包继续按 MIT 协议开源，同时提供边界明确的图表集成、渲染、交互和多端兼容付费支持。
+
+See [COMMERCIAL_SUPPORT.md](./COMMERCIAL_SUPPORT.md) for scope, transparent pricing, required materials, and safety boundaries.
+
+服务范围、透明价格、所需材料和安全边界见 [COMMERCIAL_SUPPORT.md](./COMMERCIAL_SUPPORT.md)。
+
 ## Notes For pub.dev
 
 Before publishing:
